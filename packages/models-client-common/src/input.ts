@@ -4,7 +4,7 @@ import type { Datatype } from './datatype';
 export type Input = {
   name: string;
   datatype: Datatype;
-  shape: number[];
+  shape?: number[];
   contents: Content[];
 };
 
