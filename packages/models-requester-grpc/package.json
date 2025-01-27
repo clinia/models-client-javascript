@@ -1,0 +1,68 @@
+{
+  "name": "@clinia/models-requester-grpc",
+  "version": "1.0.0",
+  "description": "Promise based gRPC request library for node and the browser.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clinia/models-client-javascript.git"
+  },
+  "license": "MIT",
+  "author": "Clinia",
+  "type": "module",
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/requester.grpc.node.d.ts",
+          "module": "./dist/requester.grpc.node.d.ts",
+          "require": "./dist/requester.grpc.node.d.cts"
+        },
+        "import": "./dist/requester.grpc.node.js",
+        "module": "./dist/requester.grpc.node.js",
+        "require": "./dist/requester.grpc.node.cjs"
+      },
+      "worker": {
+        "types": "./dist/requester.grpc.node.d.ts",
+        "default": "./dist/requester.grpc.node.js"
+      },
+      "default": {
+        "types": "./dist/requester.grpc.browser.d.ts",
+        "module": "./dist/requester.grpc.browser.js",
+        "import": "./dist/requester.grpc.browser.js",
+        "default": "./dist/requester.grpc.browser.js"
+      }
+    },
+    "./src/*": "./src/*.ts"
+  },
+  "files": [
+    "dist",
+    "index.d.ts",
+    "index.js"
+  ],
+  "scripts": {
+    "build": "yarn clean && yarn tsup",
+    "clean": "rm -rf ./dist || true",
+    "test": "tsc --noEmit && vitest --run",
+    "test:bundle": "publint . && attw --pack ."
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.2.3",
+    "@clinia/models-client-common": "1.0.0",
+    "@connectrpc/connect": "^2.0.1",
+    "@connectrpc/connect-node": "^2.0.1",
+    "@connectrpc/connect-web": "^2.0.1"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.17.3",
+    "@types/node": "22.10.7",
+    "jsdom": "26.0.0",
+    "publint": "0.3.2",
+    "ts-node": "10.9.2",
+    "tsup": "8.3.5",
+    "typescript": "5.7.3",
+    "vitest": "3.0.2"
+  },
+  "engines": {
+    "node": ">= 14.0.0"
+  }
+}

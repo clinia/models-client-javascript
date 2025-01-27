@@ -1,0 +1,15 @@
+**dist
+
+.DS_Store
+.env
+
+yarn-error.log
+lerna-debug.log
+
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+
+node_modules
+
+.nx

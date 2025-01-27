@@ -1,0 +1,28 @@
+{
+  "name": "models-client-javascript",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build --skip-nx-cache --include-dependencies",
+    "clean": "lerna run clean --include-dependencies",
+    "release:publish": "tsc --project tsconfig.script.json && node dist/scripts/publish.js",
+    "test": "lerna run test $*",
+    "test:size": "bundlewatch"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "bundlewatch": "0.4.0",
+    "execa": "9.5.2",
+    "lerna": "8.1.9",
+    "rollup": "4.30.1",
+    "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": ">= 14.0.0",
+    "yarn": "^4.0.0"
+  },
+  "packageManager": "yarn@4.6.0"
+}
