@@ -39,7 +39,7 @@ export class GrpcRequester implements Requester {
       }
 
       const { rawInputContents, shape } = preprocess(
-        getInputStringContents(input)[i],
+        getInputStringContents(input)[0],
       );
 
       grpcInputs.push({
