@@ -8,6 +8,7 @@ export interface Requester {
     modelVersion: string,
     inputs: Input[],
     outputKeys: string[],
+    id: string,
   ): Promise<Output[]>;
 
   stream(

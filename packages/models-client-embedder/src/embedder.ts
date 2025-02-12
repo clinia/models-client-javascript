@@ -7,12 +7,12 @@ import {
 } from '@clinia/models-client-common';
 
 export type EmbedRequest = {
-  id?: string;
+  id: string;
   texts: string[];
 };
 
 export type EmbedResponse = {
-  id?: string;
+  id: string;
   embeddings: Float32Array[];
 };
 
@@ -53,6 +53,7 @@ export class Embedder {
       modelVersion,
       inputs,
       outputKeys,
+      request.id,
     );
 
     // Since we have only one output, we can directly access the first output.

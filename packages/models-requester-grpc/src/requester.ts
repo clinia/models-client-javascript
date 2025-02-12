@@ -27,11 +27,12 @@ export class GrpcRequester implements Requester {
     modelVersion: string,
     inputs: Input[],
     outputKeys: string[],
+    id: string,
   ): Promise<Output[]> {
     // Prepare input tensors
     const grpcInputs: ModelInferRequest_InferInputTensor[] = [];
     const rawInputs: Uint8Array<ArrayBufferLike>[] = [];
-    for (const [i, input] of inputs.entries()) {
+    for (const [_, input] of inputs.entries()) {
       // For now we only support bytes/string data types
       // TODO: Support other data types
       if (input.datatype !== 'BYTES') {
@@ -63,6 +64,7 @@ export class GrpcRequester implements Requester {
       );
 
     const res = await this._client.modelInfer({
+      id: id,
       modelName: modelName,
       modelVersion: modelVersion,
       inputs: grpcInputs,
@@ -71,8 +73,10 @@ export class GrpcRequester implements Requester {
     });
 
     // TODO: Check resp ID
-    if (res.id !== '') {
-      throw new Error(`unexpected response id=${res.id} `);
+    if (res.id !== id) {
+      throw new Error(
+        `unexpected response id=${res.id} not equal to ${id}`,
+      );
     }
 
     if (res.rawOutputContents.length != outputKeys.length) {

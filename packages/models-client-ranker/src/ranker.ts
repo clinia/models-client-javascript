@@ -72,6 +72,7 @@ export class Ranker {
       modelVersion,
       inputs,
       outputKeys,
+      request.id,
     );
 
     // Since we have only one output, we can directly access the first output.
