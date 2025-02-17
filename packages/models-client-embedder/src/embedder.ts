@@ -7,12 +7,24 @@ import {
 } from '@clinia/models-client-common';
 
 export type EmbedRequest = {
+  /**
+   * The unique identifier for the request.
+   */
   id: string;
+  /**
+   * The list of texts to be embedded.
+   */
   texts: string[];
 };
 
 export type EmbedResponse = {
+  /**
+   * The unique identifier for the response,corresponding to that of the request.
+   */
   id: string;
+  /**
+   * The list of embeddings for each text. Each embedding is a list of floats, corresponding to the embedding dimensions.
+   */
   embeddings: Float32Array[];
 };
 
@@ -23,10 +35,21 @@ const EMBEDDER_INPUT_DATATYPE: Datatype = 'BYTES';
 export class Embedder {
   private _requester: Requester;
 
+  /**
+   * Creates an instance of Embedder.
+   * @param options - The client options containing the requester.
+   */
   constructor(options: ClientOptions) {
     this._requester = options.requester;
   }
 
+  /**
+   * Asynchronously generate embeddings using a specified model.
+   * @param modelName - The name of the model to use.
+   * @param modelVersion - The version of the model to use.
+   * @param request - The request containing texts to be embedded.
+   * @returns The response containing the embeddings.
+   */
   async embed(
     modelName: string,
     modelVersion: string,

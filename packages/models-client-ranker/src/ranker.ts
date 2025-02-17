@@ -16,23 +16,49 @@ const RANKER_TEXT_INPUT_DATATYPE: Datatype = 'BYTES';
 const RANKER_OUTPUT_KEY = 'score';
 
 export type RankRequest = {
+  /**
+   * The unique identifier for the request.
+   */
   id: string;
+  /**
+   * The query to rank the passages against.
+   */
   query: string;
+  /**
+   * The list of passages to be ranked.
+   */
   texts: string[];
 };
 
 export type RankResponse = {
+  /**
+   * The unique identifier for the response, corresponding to that of the request.
+   */
   id: string;
+  /**
+   * The list of scores for each pair of query and passage..
+   */
   scores: Float32Array;
 };
 
 export class Ranker {
   private _requester: Requester;
 
+  /**
+   * Creates an instance of Ranker.
+   * @param options - The client options containing the requester.
+   */
   constructor(options: ClientOptions) {
     this._requester = options.requester;
   }
 
+  /**
+   * Asynchronously rank passages using a specified model.
+   * @param modelName - The name of the model to use.
+   * @param modelVersion - The version of the model to use.
+   * @param request - The request containing the query and texts to be ranked.
+   * @returns The response containing the scores.
+   */
   async rank(
     modelName: string,
     modelVersion: string,

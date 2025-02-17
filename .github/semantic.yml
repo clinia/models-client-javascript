@@ -1,0 +1,2 @@
+# Only validate the PR title, ignore the commits because we squash them.
+titleOnly: true
