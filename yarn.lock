@@ -82,6 +82,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@clinia/models-client-chunker@workspace:packages/models-client-chunker":
+  version: 0.0.0-use.local
+  resolution: "@clinia/models-client-chunker@workspace:packages/models-client-chunker"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:0.17.3"
+    "@clinia/models-client-common": "npm:1.0.0"
+    "@clinia/models-requester-grpc": "npm:1.0.0"
+    "@types/node": "npm:22.10.7"
+    publint: "npm:0.3.2"
+    rollup: "npm:4.30.1"
+    tsup: "npm:8.3.5"
+    typescript: "npm:5.7.3"
+    vitest: "npm:^3.0.5"
+  languageName: unknown
+  linkType: soft
+
 "@clinia/models-client-common@npm:1.0.0, @clinia/models-client-common@workspace:packages/models-client-common":
   version: 0.0.0-use.local
   resolution: "@clinia/models-client-common@workspace:packages/models-client-common"

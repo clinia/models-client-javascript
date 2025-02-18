@@ -9,11 +9,13 @@ import {
 import { type Transport, createClient, type Client } from '@connectrpc/connect';
 import {
   GRPCInferenceService,
+  type ModelInferRequest,
   type ModelInferRequest_InferInputTensor,
   type ModelInferRequest_InferRequestedOutputTensor,
+  type ModelInferResponse,
 } from './gen/grpc_service_pb';
 import { preprocess } from './preprocess';
-import { postprocessFp32 } from './postprocess';
+import { postprocessBytes, postprocessFp32 } from './postprocess';
 
 export class GrpcRequester implements Requester {
   private _client: Client<typeof GRPCInferenceService>;
@@ -22,16 +24,16 @@ export class GrpcRequester implements Requester {
     this._client = createClient(GRPCInferenceService, transport);
   }
 
-  async infer(
+  private buildRequest(
     modelName: string,
     modelVersion: string,
     inputs: Input[],
     outputKeys: string[],
     id: string,
-  ): Promise<Output[]> {
+  ): ModelInferRequest {
     // Prepare input tensors
     const grpcInputs: ModelInferRequest_InferInputTensor[] = [];
-    const rawInputs: Uint8Array<ArrayBufferLike>[] = [];
+    const rawInputs: Uint8Array[] = [];
     for (const [_, input] of inputs.entries()) {
       // For now we only support bytes/string data types
       // TODO: Support other data types
@@ -63,20 +65,71 @@ export class GrpcRequester implements Requester {
         }),
       );
 
-    const res = await this._client.modelInfer({
-      id: id,
+    return {
       modelName: modelName,
       modelVersion: modelVersion,
+      id: id,
       inputs: grpcInputs,
       outputs: grpcOutputs,
       rawInputContents: rawInputs,
-    });
+    } as ModelInferRequest;
+  }
+
+  private processResponse(res: ModelInferResponse): Output[] {
+    // Prepare output tensors
+    const outputs: Output[] = [];
+    for (const [i, rawOutputContent] of res.rawOutputContents.entries()) {
+      const resOutput = res.outputs[i];
+      let contents: Content[] = [];
+
+      // TODO: Support other datatypes
+      switch (resOutput.datatype) {
+        case 'FP32': {
+          const output32 = postprocessFp32(rawOutputContent, resOutput.shape);
+          contents = output32.map<Content>((v) => ({ fp32Contents: v }));
+          break;
+        }
+        case 'BYTES': {
+          const outputBytes = postprocessBytes(
+            rawOutputContent,
+            resOutput.shape,
+          );
+          contents = outputBytes.map<Content>((v) => ({ stringContents: v }));
+          break;
+        }
+        default:
+          throw new Error(`unsupported datatype ${resOutput.datatype}`);
+      }
+
+      outputs.push({
+        name: resOutput.name,
+        shape: resOutput.shape.map((v) => Number(v)),
+        datatype: resOutput.datatype,
+        contents: contents,
+      });
+    }
+    return outputs;
+  }
+
+  async infer(
+    modelName: string,
+    modelVersion: string,
+    inputs: Input[],
+    outputKeys: string[],
+    id: string,
+  ): Promise<Output[]> {
+    const req = this.buildRequest(
+      modelName,
+      modelVersion,
+      inputs,
+      outputKeys,
+      id,
+    );
+    const res = await this._client.modelInfer(req);
 
     // TODO: Check resp ID
     if (res.id !== id) {
-      throw new Error(
-        `unexpected response id=${res.id} not equal to ${id}`,
-      );
+      throw new Error(`unexpected response id=${res.id} not equal to ${id}`);
     }
 
     if (res.rawOutputContents.length != outputKeys.length) {
@@ -85,29 +138,7 @@ export class GrpcRequester implements Requester {
       );
     }
 
-    // Prepare output tensors
-    const outputs: Output[] = [];
-    for (const [i, rawOutputContent] of res.rawOutputContents.entries()) {
-      const resOutput = res.outputs[i];
-
-      // For now, we only support FP32 datatype
-      // TODO: Support other datatypes
-      if (resOutput.datatype !== 'FP32') {
-        throw new Error(`unsupported output datatype: ${resOutput.datatype}`);
-      }
-
-      const output32 = postprocessFp32(rawOutputContent, resOutput.shape);
-      const contents = output32.map<Content>((v) => ({ fp32Contents: v }));
-
-      outputs.push({
-        name: resOutput.name,
-        shape: resOutput.shape.map((v) => Number(v)),
-        datatype: 'FP32',
-        contents: contents,
-      });
-    }
-
-    return outputs;
+    return this.processResponse(res);
   }
 
   stream(

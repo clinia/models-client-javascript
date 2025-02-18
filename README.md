@@ -36,17 +36,66 @@ You can now import the Clinia Models client in your project and play with it.
 
 ## Playground Examples
 
-### Embedder Model
+### Embedder
 
-```typescript
-// TODO
+``` typescript
+import { embedder } from '@clinia/models-client-embedder';
+
+async function runEmbedderExample() {
+  const myEmbedder = embedder({
+    host: {
+      Url: '127.0.0.1',
+      Scheme: 'http',
+      Port: 8001,
+    },
+  });
+
+  const result = await myEmbedder.embed(
+    'embedder_medical_journals_qa',
+    '120240905185426',
+    {
+      texts: ['Clinia is based in Montreal'],
+      id: 'request-123',
+    },
+  );
+
+  console.log(JSON.stringify(result, null, 2));
+}
+
+runEmbedderExample().catch(console.error);
 ```
 
-### Ranker Model
-
+### Chunker
 ```typescript
+import { chunker } from '@clinia/models-client-chunker';
+
+async function runChunkerExample() {
+  const myChunker = chunker({
+    host: {
+      Url: '127.0.0.1',
+      Scheme: 'http',
+      Port: 8001,
+    },
+  });
+
+  const result = await myChunker.chunk(
+    'chunker',
+    '120252801110000',
+    {
+      texts: ['Clinia is based in Montreal'],
+      id: 'request-123',
+    },
+  );
+
+  console.log(JSON.stringify(result, null, 2));
+}
+
+runChunkerExample().catch(console.error);
+```
+
+### Ranker
+``` typescript
 import { ranker } from '@clinia/models-client-ranker';
-import { v4 as uuidv4 } from 'uuid';
 
 async function runRankerExample() {
   const myRanker = ranker({
@@ -57,32 +106,20 @@ async function runRankerExample() {
     },
   });
 
-  // Get model name and version from environment variables.
-  const modelName = process.env.CLINIA_MODEL_NAME;
-  const modelVersion = process.env.CLINIA_MODEL_VERSION;
-  if (!modelName || !modelVersion) {
-    throw new Error('Missing required environment variables: CLINIA_MODEL_NAME or CLINIA_MODEL_VERSION');
-  }
-
-  const rankRequest = {
-    id: uuidv4(),
-    query: 'Where is Clinia based?',
-    texts: ['Clinia is based in Montreal'],
-  };
-
-  const result = await myRanker.rank(modelName, modelVersion, rankRequest);
-  console.log('Rank result:', result);
+  const result = await myRanker.rank(
+    'ranker_medical_journals_qa',
+    '120240905185925',
+    {
+      query: 'hello, how are you?',
+      texts: ['Clinia is based in Montreal'],
+      id: 'request-123',
+    },
+  );
 
   console.log('Rank result:', result);
 }
 
 runRankerExample().catch(console.error);
-```
-
-### Chunker Model
-
-```typescript
-// TODO
 ```
 
 ## Note

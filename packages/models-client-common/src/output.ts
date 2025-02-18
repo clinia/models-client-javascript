@@ -20,3 +20,16 @@ export const getOutputFp32Contents = (output: Output): Float32Array[] => {
 
   return contents;
 };
+
+export const getOutputStringContents = (output: Output): string[][] => {
+  if (output.datatype !== 'BYTES') {
+    throw new Error('Data type not supported');
+  }
+
+  const contents: string[][] = [];
+  for (const content of output.contents) {
+    if (content.stringContents) contents.push(content.stringContents);
+  }
+
+  return contents;
+};
