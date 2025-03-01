@@ -1,0 +1,34 @@
+name: Publish package to GitHub Packages
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install JavaScript dependencies
+        shell: bash
+        run: yarn install
+
+      - name: Build clients
+        shell: bash
+        run: yarn build
+
+      - name: Publish to NPM
+        shell: bash
+        run: yarn release:publish
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.CLINIA_CI_GITHUB_TOKEN }}
