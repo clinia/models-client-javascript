@@ -65,9 +65,10 @@ export class GrpcRequester implements Requester {
         }),
       );
 
+    // NOTE: The model version is always set to 1 because all models deployed within the same Triton server instance -- when stored in different model repositories -- must have unique names.
     return {
-      modelName: modelName,
-      modelVersion: modelVersion,
+      modelName: `${modelName}:${modelVersion}`,
+      modelVersion: '1',
       id: id,
       inputs: grpcInputs,
       outputs: grpcOutputs,

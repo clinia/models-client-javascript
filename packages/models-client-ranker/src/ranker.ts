@@ -10,7 +10,7 @@ const RANKER_QUERY_INPUT_KEY = 'query';
 const RANKER_QUERY_INPUT_DATATYPE: Datatype = 'BYTES';
 
 // TODO: change to text
-const RANKER_TEXT_INPUT_KEY = 'passage';
+const RANKER_TEXT_INPUT_KEY = 'text';
 const RANKER_TEXT_INPUT_DATATYPE: Datatype = 'BYTES';
 
 const RANKER_OUTPUT_KEY = 'score';
@@ -36,7 +36,7 @@ export type RankResponse = {
    */
   id: string;
   /**
-   * The list of scores for each pair of query and passage..
+   * The list of scores for each pair of query and passage.
    */
   scores: Float32Array;
 };
@@ -110,7 +110,7 @@ export class Ranker {
     for (const score of scores) {
       if (score.length !== 1) {
         throw new Error(
-          `Expected a single score per passage, but got ${score.length} elements`,
+          `Expected a single score per text, but got ${score.length} elements`,
         );
       }
       flattenedScores.push(...score);

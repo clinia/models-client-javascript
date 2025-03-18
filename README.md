@@ -38,7 +38,7 @@ You can now import the Clinia Models client in your project and play with it.
 
 ### Embedder
 
-``` typescript
+```typescript
 import { embedder } from '@clinia/models-client-embedder';
 
 async function runEmbedderExample() {
@@ -52,7 +52,7 @@ async function runEmbedderExample() {
 
   const result = await myEmbedder.embed(
     'embedder_medical_journals_qa',
-    '120240905185426',
+    '20250306T064951Z',
     {
       texts: ['Clinia is based in Montreal'],
       id: 'request-123',
@@ -66,6 +66,7 @@ runEmbedderExample().catch(console.error);
 ```
 
 ### Chunker
+
 ```typescript
 import { chunker } from '@clinia/models-client-chunker';
 
@@ -80,7 +81,7 @@ async function runChunkerExample() {
 
   const result = await myChunker.chunk(
     'chunker',
-    '120252801110000',
+    '20250306T064951Z',
     {
       texts: ['Clinia is based in Montreal'],
       id: 'request-123',
@@ -94,7 +95,8 @@ runChunkerExample().catch(console.error);
 ```
 
 ### Ranker
-``` typescript
+
+```typescript
 import { ranker } from '@clinia/models-client-ranker';
 
 async function runRankerExample() {
@@ -108,7 +110,7 @@ async function runRankerExample() {
 
   const result = await myRanker.rank(
     'ranker_medical_journals_qa',
-    '120240905185925',
+    '20250306T064951Z',
     {
       query: 'hello, how are you?',
       texts: ['Clinia is based in Montreal'],
