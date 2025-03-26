@@ -41,8 +41,8 @@ jobs:
         shell: bash
         run: yarn build
 
-      - name: Publish to NPM
+      - name: Publish to Github NPM
         shell: bash
-        run: yarn release:publish
+        run: yarn workspaces foreach --all -pt npm publish
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.CLINIA_CI_GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
