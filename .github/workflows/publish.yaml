@@ -43,6 +43,6 @@ jobs:
 
       - name: Publish to Github NPM
         shell: bash
-        run: yarn workspaces foreach --all -pt npm publish
+        run: yarn workspaces foreach --all --no-private -pt npm publish
         env:
           NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
