@@ -17,6 +17,13 @@ export interface Requester {
     inputs: Input[],
   ): AsyncIterable<string>;
 
+  ready(
+    modelName: string,
+    modelVersion: string,
+  ): Promise<void>;
+
+  health(): Promise<void>;
+
   close(): void;
 }
 

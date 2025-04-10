@@ -9,19 +9,21 @@ import {
 import { type Transport, createClient, type Client } from '@connectrpc/connect';
 import {
   GRPCInferenceService,
+  type ModelReadyRequest,
+  type ServerReadyRequest,
   type ModelInferRequest,
   type ModelInferRequest_InferInputTensor,
   type ModelInferRequest_InferRequestedOutputTensor,
   type ModelInferResponse,
 } from './gen/grpc_service_pb';
-import { preprocess } from './preprocess';
+import { preprocess, formatModelNameAndVersion } from './preprocess';
 import { postprocessBytes, postprocessFp32 } from './postprocess';
 
 export class GrpcRequester implements Requester {
-  private _client: Client<typeof GRPCInferenceService>;
+  private _inferenceClient: Client<typeof GRPCInferenceService>;
 
   constructor(transport: Transport) {
-    this._client = createClient(GRPCInferenceService, transport);
+    this._inferenceClient = createClient(GRPCInferenceService, transport);
   }
 
   private buildRequest(
@@ -65,10 +67,9 @@ export class GrpcRequester implements Requester {
         }),
       );
 
-    // NOTE: The model version is always set to 1 because all models deployed within the same Triton server instance -- when stored in different model repositories -- must have unique names.
     return {
-      modelName: `${modelName}:${modelVersion}`,
-      modelVersion: '1',
+      modelName: modelName,
+      modelVersion: modelVersion,
       id: id,
       inputs: grpcInputs,
       outputs: grpcOutputs,
@@ -119,14 +120,18 @@ export class GrpcRequester implements Requester {
     outputKeys: string[],
     id: string,
   ): Promise<Output[]> {
+    // Format model name and version
+    const [formattedModelName, formattedModelVersion] =
+      formatModelNameAndVersion(modelName, modelVersion);
+
     const req = this.buildRequest(
-      modelName,
-      modelVersion,
+      formattedModelName,
+      formattedModelVersion,
       inputs,
       outputKeys,
       id,
     );
-    const res = await this._client.modelInfer(req);
+    const res = await this._inferenceClient.modelInfer(req);
 
     // TODO: Check resp ID
     if (res.id !== id) {
@@ -140,6 +145,34 @@ export class GrpcRequester implements Requester {
     }
 
     return this.processResponse(res);
+  }
+
+  async ready(modelName: string, modelVersion: string): Promise<void> {
+    // Format model name and version
+    const [formattedModelName, formattedModelVersion] =
+      formatModelNameAndVersion(modelName, modelVersion);
+
+    const request: ModelReadyRequest = {
+      $typeName: 'inference.ModelReadyRequest',
+      name: formattedModelName,
+      version: formattedModelVersion,
+    };
+    const res = await this._inferenceClient.modelReady(request);
+    if (!res.ready) {
+      throw new Error(
+        `Model ${modelName} with version ${modelVersion} is not ready`,
+      );
+    }
+  }
+
+  async health(): Promise<void> {
+    const request: ServerReadyRequest = {
+      $typeName: 'inference.ServerReadyRequest',
+    };
+    const res = await this._inferenceClient.serverReady(request);
+    if (!res.ready) {
+      throw new Error('Server is not ready');
+    }
   }
 
   stream(

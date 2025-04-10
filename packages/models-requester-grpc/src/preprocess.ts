@@ -57,3 +57,15 @@ const serializeByteTensor = (inputTensor: Uint8Array[]): Uint8Array => {
 
   return new Uint8Array(flattenedBytesBuffer);
 };
+
+/**
+ * Format model name and version for the request.
+ * The model version is always set to 1 because all models deployed within the same Triton
+ * server instance -- when stored in different model repositories -- must have unique names.
+ */
+export const formatModelNameAndVersion = (
+  modelName: string,
+  modelVersion: string,
+): [string, string] => {
+  return [`${modelName}:${modelVersion}`, '1'];
+};

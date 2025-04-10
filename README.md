@@ -50,9 +50,18 @@ async function runEmbedderExample() {
     },
   });
 
+  // Will throw an error if server is not ready
+  await myEmbedder.requester.health();
+
+  // Will throw an error if model is not ready
+  await myEmbedder.ready(
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
+  );
+
   const result = await myEmbedder.embed(
-    'embedder_medical_journals_qa',
-    '20250306T064951Z',
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
     {
       texts: ['Clinia is based in Montreal'],
       id: 'request-123',
@@ -79,9 +88,18 @@ async function runChunkerExample() {
     },
   });
 
+  // Will throw an error if server is not ready
+  await myChunker.requester.health();
+
+  // Will throw an error if model is not ready
+  await myChunker.ready(
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
+  );
+
   const result = await myChunker.chunk(
-    'chunker',
-    '20250306T064951Z',
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
     {
       texts: ['Clinia is based in Montreal'],
       id: 'request-123',
@@ -108,9 +126,18 @@ async function runRankerExample() {
     },
   });
 
+  // Will throw an error if server is not ready
+  await myRanker.requester.health();
+
+  // Will throw an error if model is not ready
+  await myRanker.ready(
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
+  );
+
   const result = await myRanker.rank(
-    'ranker_medical_journals_qa',
-    '20250306T064951Z',
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
     {
       query: 'hello, how are you?',
       texts: ['Clinia is based in Montreal'],

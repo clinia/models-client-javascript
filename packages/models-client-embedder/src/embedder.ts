@@ -36,6 +36,13 @@ export class Embedder {
   private _requester: Requester;
 
   /**
+   * Get the underlying requester instance.
+   */
+  get requester(): Requester {
+    return this._requester;
+  }
+
+  /**
    * Creates an instance of Embedder.
    * @param options - The client options containing the requester.
    */
@@ -87,5 +94,16 @@ export class Embedder {
       id: request.id,
       embeddings,
     };
+  }
+
+  /**
+   * Checks the readiness status of the model.
+   * @throws {Error} If the model is not ready.
+  */
+  async ready(
+    modelName: string,
+    modelVersion: string,
+  ): Promise<void> {
+    await this._requester.ready(modelName, modelVersion);
   }
 }
