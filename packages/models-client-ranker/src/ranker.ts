@@ -71,6 +71,18 @@ export class Ranker {
     modelVersion: string,
     request: RankRequest,
   ): Promise<RankResponse> {
+    if (!request.query || request.query.trim() === '') {
+      throw new Error('The request must contain a query.');
+    }
+
+    if (!request.texts) {
+      throw new Error('Request texts must be provided.');
+    }
+
+    if (request.texts.length === 0) {
+      throw new Error('Request texts cannot be empty.');
+    }
+
     // Duplicate query to be the same size as texts
     const inputQueries = Array(request.texts.length).fill(request.query);
 
@@ -132,11 +144,8 @@ export class Ranker {
   /**
    * Checks the readiness status of the model.
    * @throws {Error} If the model is not ready.
-  */
-  async ready(
-    modelName: string,
-    modelVersion: string,
-  ): Promise<void> {
+   */
+  async ready(modelName: string, modelVersion: string): Promise<void> {
     await this._requester.ready(modelName, modelVersion);
   }
 }

@@ -62,6 +62,14 @@ export class Embedder {
     modelVersion: string,
     request: EmbedRequest,
   ): Promise<EmbedResponse> {
+    if (!request.texts) {
+      throw new Error('Request texts must be provided.');
+    }
+
+    if (request.texts.length === 0) {
+      throw new Error('Request texts cannot be empty.');
+    }
+
     const inputs: Input[] = [
       {
         name: EMBEDDER_INPUT_KEY,
@@ -99,11 +107,8 @@ export class Embedder {
   /**
    * Checks the readiness status of the model.
    * @throws {Error} If the model is not ready.
-  */
-  async ready(
-    modelName: string,
-    modelVersion: string,
-  ): Promise<void> {
+   */
+  async ready(modelName: string, modelVersion: string): Promise<void> {
     await this._requester.ready(modelName, modelVersion);
   }
 }

@@ -67,6 +67,14 @@ export class Chunker {
     modelVersion: string,
     request: ChunkRequest,
   ): Promise<ChunkResponse> {
+    if (!request.texts) {
+      throw new Error('Request must contain texts to chunk.');
+    }
+
+    if (request.texts.length === 0) {
+      throw new Error('Request texts cannot be empty.');
+    }
+
     const inputs: Input[] = [
       {
         name: CHUNK_INPUT_KEY,
@@ -104,11 +112,8 @@ export class Chunker {
   /**
    * Checks the readiness status of the model.
    * @throws {Error} If the model is not ready.
-  */
-  async ready(
-    modelName: string,
-    modelVersion: string,
-  ): Promise<void> {
+   */
+  async ready(modelName: string, modelVersion: string): Promise<void> {
     await this._requester.ready(modelName, modelVersion);
   }
 }
