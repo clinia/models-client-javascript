@@ -21,6 +21,29 @@ export const getOutputFp32Contents = (output: Output): Float32Array[] => {
   return contents;
 };
 
+export const getOutputSparseContents = (
+  output: Output,
+): Record<string, number>[] => {
+  if (output.datatype !== 'BYTES') {
+    throw new Error('Data type not supported');
+  }
+
+  const contents: Record<string, number>[] = [];
+  for (const content of output.contents) {
+    if (content.stringContents) {
+      for (const jsonString of content.stringContents) {
+        try {
+          contents.push(JSON.parse(jsonString));
+        } catch (err: any) {
+          throw new Error(`Failed to parse JSON string: ${err.message}`);
+        }
+      }
+    }
+  }
+
+  return contents;
+};
+
 export const getOutputStringContents = (output: Output): string[][] => {
   if (output.datatype !== 'BYTES') {
     throw new Error('Data type not supported');

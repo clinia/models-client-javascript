@@ -74,6 +74,44 @@ async function runEmbedderExample() {
 runEmbedderExample().catch(console.error);
 ```
 
+### Sparse Embedder
+
+```typescript
+import { sparseEmbedder } from '@clinia/models-client-sparse-embedder';
+
+async function runEmbedderExample() {
+  const myEmbedder = sparseEmbedder({
+    host: {
+      Url: '127.0.0.1',
+      Scheme: 'http',
+      Port: 8001,
+    },
+  });
+
+  // Will throw an error if server is not ready
+  await myEmbedder.requester.health();
+
+  // Will throw an error if model is not ready
+  await myEmbedder.ready(
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
+  );
+
+  const result = await myEmbedder.embed(
+    process.env.CLINIA_MODEL_NAME,
+    process.env.CLINIA_MODEL_VERSION,
+    {
+      texts: ['Clinia is based in Montreal'],
+      id: 'request-123',
+    },
+  );
+
+  console.log(JSON.stringify(result, null, 2));
+}
+
+runEmbedderExample().catch(console.error);
+```
+
 ### Chunker
 
 ```typescript

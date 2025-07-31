@@ -1,0 +1,63 @@
+{
+  "name": "@clinia/models-client-sparse-embedder",
+  "version": "1.0.0",
+  "description": "Javascript client for Clinia sparse embed model",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clinia/models-client-javascript.git"
+  },
+  "license": "MIT",
+  "author": "Clinia",
+  "type": "module",
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/node.d.ts",
+          "module": "./dist/node.d.ts",
+          "require": "./dist/node.d.cts"
+        },
+        "import": "./dist/builds/node.js",
+        "module": "./dist/builds/node.js",
+        "require": "./dist/builds/node.cjs"
+      },
+      "default": {
+        "types": "./dist/browser.d.ts",
+        "module": "./dist/builds/browser.js",
+        "import": "./dist/builds/browser.js",
+        "default": "./dist/builds/browser.umd.js"
+      }
+    },
+    "./dist/builds/*": "./dist/builds/*.js"
+  },
+  "jsdelivr": "./dist/builds/browser.umd.js",
+  "unpkg": "./dist/builds/browser.umd.js",
+  "react-native": "./dist/builds/browser.js",
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "yarn clean && yarn tsup",
+    "clean": "rm -rf ./dist || true",
+    "test": "tsc --noEmit && vitest --run",
+    "test:bundle": "publint . && attw --pack ."
+  },
+  "dependencies": {
+    "@clinia/models-client-common": "1.0.0",
+    "@clinia/models-requester-grpc": "1.0.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.17.3",
+    "@types/node": "22.10.7",
+    "publint": "0.3.2",
+    "rollup": "4.30.1",
+    "tsup": "8.3.5",
+    "typescript": "5.7.3",
+    "vitest": "^3.0.5"
+  },
+  "engines": {
+    "node": ">= 14.0.0"
+  }
+}

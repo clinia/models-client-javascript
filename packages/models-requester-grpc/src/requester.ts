@@ -17,7 +17,7 @@ import {
   type ModelInferResponse,
 } from './gen/grpc_service_pb';
 import { preprocess, formatModelNameAndVersion } from './preprocess';
-import { postprocessBytes, postprocessFp32 } from './postprocess';
+import { decodeBytes, postprocessBytes, postprocessFp32 } from './postprocess';
 
 export class GrpcRequester implements Requester {
   private _inferenceClient: Client<typeof GRPCInferenceService>;
@@ -92,10 +92,12 @@ export class GrpcRequester implements Requester {
           break;
         }
         case 'BYTES': {
-          const outputBytes = postprocessBytes(
-            rawOutputContent,
-            resOutput.shape,
-          );
+          let outputBytes: string[][];
+          if (resOutput.shape.length === 1) {
+            outputBytes = [decodeBytes(rawOutputContent)];
+          } else {
+            outputBytes = postprocessBytes(rawOutputContent, resOutput.shape);
+          }
           contents = outputBytes.map<Content>((v) => ({ stringContents: v }));
           break;
         }

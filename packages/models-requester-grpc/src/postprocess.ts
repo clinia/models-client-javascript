@@ -19,7 +19,7 @@ export const postprocessBytes = (
  * @param encodedTensor - The encoded tensor as a Uint8Array.
  * @returns The decoded string array.
  */
-const decodeBytes = (encodedTensor: Uint8Array): string[] => {
+export const decodeBytes = (encodedTensor: Uint8Array): string[] => {
   const result: string[] = [];
   let offset = 0;
   const view = new DataView(
